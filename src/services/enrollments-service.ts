@@ -52,7 +52,7 @@ async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollm
   const enrollment = exclude(params, 'address');
   enrollment.birthday = new Date(enrollment.birthday);
   const address = getAddressForUpsert(params.address);
-  console.log(address)
+  console.log(address);
 
   // TODO - Verificar se o CEP é válido antes de associar ao enrollment.
 

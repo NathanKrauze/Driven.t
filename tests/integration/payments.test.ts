@@ -247,4 +247,3 @@ describe('POST /payments/process', () => {
     });
   });
 });
-

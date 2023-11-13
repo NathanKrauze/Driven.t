@@ -23,4 +23,3 @@ export function generateCreditCardData() {
     cvv: faker.datatype.number({ min: 100, max: 999 }).toString(),
   };
 }
-

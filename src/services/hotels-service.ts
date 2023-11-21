@@ -4,6 +4,7 @@ import { enrollmentRepository, hotelsRepository, ticketsRepository } from '@/rep
 async function getHotels(userId: number) {
   await checkEnrollmentAndTicketStatus(userId);
   const result = await hotelsRepository.getHotels();
+  if(result.length === 0) throw notFoundError()
   return result;
 }
 

@@ -113,7 +113,7 @@ describe('GET /hotels', () => {
 
       expect(response.status).toBe(402);
     });
-    it('should respond with status 200 and with an empty array when there are no hotels data', async () => {
+    it('should respond with status 404 when there are no hotels data', async () => {
       const user = await createUser();
       const token = await generateValidToken(user);
       const enrollment = await createEnrollmentWithAddress(user);
@@ -129,8 +129,7 @@ describe('GET /hotels', () => {
 
       const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
 
-      expect(response.status).toBe(200);
-      expect(response.body).toEqual([]);
+      expect(response.status).toBe(404);
     });
     it('should respond with status 200 and with existing hotels data', async () => {
       const user = await createUser();

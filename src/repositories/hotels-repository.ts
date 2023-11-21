@@ -1,4 +1,3 @@
-import { Hotel } from '@prisma/client';
 import { prisma } from '@/config';
 
 async function getHotels() {

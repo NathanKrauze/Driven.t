@@ -1,37 +1,43 @@
-import { notFoundError, paymentRequiredError } from '@/errors';
-import { enrollmentRepository, hotelsRepository, ticketsRepository } from '@/repositories';
+import { TicketStatus } from '@prisma/client';
+import { invalidDataError, notFoundError } from '@/errors';
+import { cannotListHotelsError } from '@/errors/cannot-list-hotels-error';
+import { enrollmentRepository, hotelRepository, ticketsRepository } from '@/repositories';
 
-async function getHotels(userId: number) {
-  await checkEnrollmentAndTicketStatus(userId);
-  const result = await hotelsRepository.getHotels();
-  if(result.length === 0) throw notFoundError()
-  return result;
-}
-
-async function getHotelsById(userId: number, hotelId: number) {
-  await checkEnrollmentAndTicketStatus(userId);
-  const hotel = await hotelsRepository.getHotelsById(hotelId);
-  if (!hotel) throw notFoundError();
-  return hotel;
-}
-
-async function checkEnrollmentAndTicketStatus(userId: number) {
+async function validateUserBooking(userId: number) {
   const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
   if (!enrollment) throw notFoundError();
 
   const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
-  if (!ticket) {
-    throw notFoundError();
-  } else if (
-    ticket.status === 'RESERVED' ||
-    ticket.TicketType.includesHotel === false ||
-    ticket.TicketType.isRemote === true
-  ) {
-    throw paymentRequiredError();
+  if (!ticket) throw notFoundError();
+
+  const type = ticket.TicketType;
+
+  if (ticket.status === TicketStatus.RESERVED || type.isRemote || !type.includesHotel) {
+    throw cannotListHotelsError();
   }
+}
+
+async function getHotels(userId: number) {
+  await validateUserBooking(userId);
+
+  const hotels = await hotelRepository.findHotels();
+  if (hotels.length === 0) throw notFoundError();
+
+  return hotels;
+}
+
+async function getHotelsWithRooms(userId: number, hotelId: number) {
+  await validateUserBooking(userId);
+
+  if (!hotelId || isNaN(hotelId)) throw invalidDataError('hotelId');
+
+  const hotelWithRooms = await hotelRepository.findRoomsByHotelId(hotelId);
+  if (!hotelWithRooms) throw notFoundError();
+
+  return hotelWithRooms;
 }
 
 export const hotelsService = {
   getHotels,
-  getHotelsById,
+  getHotelsWithRooms,
 };

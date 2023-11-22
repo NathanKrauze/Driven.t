@@ -5,14 +5,15 @@ import { hotelsService } from '@/services';
 
 export async function getHotels(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
-  const result = await hotelsService.getHotels(userId);
-  return res.status(httpStatus.OK).send(result);
+
+  const hotels = await hotelsService.getHotels(userId);
+  res.status(httpStatus.OK).send(hotels);
 }
 
-export async function getHotelsById(req: AuthenticatedRequest, res: Response) {
+export async function getHotelsWithRooms(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
-  const { hotelId } = req.params;
-  const idHotel = parseInt(hotelId);
-  const result = await hotelsService.getHotelsById(userId, idHotel);
-  return res.status(httpStatus.OK).send(result);
+  const hotelId = Number(req.params.hotelId);
+
+  const hotelWithRooms = await hotelsService.getHotelsWithRooms(userId, hotelId);
+  res.status(httpStatus.OK).send(hotelWithRooms);
 }

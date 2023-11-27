@@ -54,7 +54,7 @@ describe('POST /booking', () => {
       const user = await createUser();
       const token = await generateValidToken(user);
       const { status } = await server.post('/booking').set('Authorization', `Bearer ${token}`).send({});
-      expect(status).toBe(400);
+      expect(status).toBe(httpStatus.BAD_REQUEST);
     });
 
     it('should respond with status 400 when body is invalid', async () => {
@@ -62,7 +62,7 @@ describe('POST /booking', () => {
       const token = await generateValidToken(user);
       const body = { [faker.lorem.word()]: faker.lorem.word() };
       const { status } = await server.post('/booking').set('Authorization', `Bearer ${token}`).send(body);
-      expect(status).toBe(400);
+      expect(status).toBe(httpStatus.BAD_REQUEST);
     });
 
     describe('when body is valid', () => {
@@ -79,7 +79,7 @@ describe('POST /booking', () => {
         const roomId = room.id;
 
         const { status, body } = await server.post('/booking').set('Authorization', `Bearer ${token}`).send({ roomId });
-        expect(status).toBe(201);
+        expect(status).toBe(httpStatus.OK);
         expect(body).toEqual({
           bookingId: expect.any(Number),
         });
@@ -116,7 +116,7 @@ describe('POST /booking', () => {
       const user = await createUser();
       const token = await generateValidToken(user);
       const { status } = await server.get('/booking').set('Authorization', `Bearer ${token}`);
-      expect(status).toBe(404);
+      expect(status).toBe(httpStatus.NOT_FOUND);
     });
     it('should respond with status 200 and the user booking', async () => {
       const user = await createUser();
@@ -130,7 +130,7 @@ describe('POST /booking', () => {
       const booking = await createBooking(user.id, room.id);
 
       const { status, body } = await server.get('/booking').set('Authorization', `Bearer ${token}`);
-      expect(status).toBe(200);
+      expect(status).toBe(httpStatus.OK);
       expect(body).toEqual({
         id: booking.id,
         userId: booking.userId,
@@ -179,7 +179,7 @@ describe('POST /booking', () => {
       const token = await generateValidToken(user);
       const bookingId = faker.datatype.number();
       const { status } = await server.put(`/booking/${bookingId}`).set('Authorization', `Bearer ${token}`).send({});
-      expect(status).toBe(400);
+      expect(status).toBe(httpStatus.BAD_REQUEST);
     });
 
     it('should respond with status 400 when body is invalid', async () => {
@@ -188,7 +188,7 @@ describe('POST /booking', () => {
       const body = { [faker.lorem.word()]: faker.lorem.word() };
       const bookingId = faker.datatype.number();
       const { status } = await server.put(`/booking/${bookingId}`).set('Authorization', `Bearer ${token}`).send(body);
-      expect(status).toBe(400);
+      expect(status).toBe(httpStatus.BAD_REQUEST);
     });
     describe('when body is valid', () => {
       it('should respond with status 403 when user does not have a booking', async () => {
@@ -206,7 +206,7 @@ describe('POST /booking', () => {
         };
 
         const { status } = await server.put(`/booking/${bookingId}`).set('Authorization', `Bearer ${token}`).send(body);
-        expect(status).toBe(403);
+        expect(status).toBe(httpStatus.FORBIDDEN);
       });
       it('Should respond with status 200 and the bookingId', async () => {
         const user = await createUser();
@@ -227,7 +227,7 @@ describe('POST /booking', () => {
           .put(`/booking/${booking.id}`)
           .set('Authorization', `Bearer ${token}`)
           .send(inputBody);
-        expect(status).toBe(200);
+        expect(status).toBe(httpStatus.OK);
         expect(body).toEqual({
           bookingId: booking.id,
         });

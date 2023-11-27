@@ -11,7 +11,10 @@ async function createBooking(roomId: number, userId: number) {
     await checkEnrollmentAndTicket(userId);
     await checkVacancy(roomId);
     const result = await bookingRepository.createBooking(userId, roomId);
-    return result;
+    const booking = {
+        bookingId: result.id
+    }
+    return booking;
 }
 
 async function changeBooking() {
@@ -47,4 +50,6 @@ export const bookingService = {
     getBooking,
     createBooking,
     changeBooking,
+    checkEnrollmentAndTicket,
+    checkVacancy
 }

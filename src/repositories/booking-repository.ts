@@ -29,6 +29,9 @@ async function findRoom(roomId: number) {
     return await prisma.room.findUnique({
         where: {
             id: roomId,
+        },
+        select: {
+            capacity: true
         }
     })
   }

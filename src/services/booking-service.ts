@@ -21,8 +21,15 @@ async function createBooking(roomId: number, userId: number) {
     return booking;
 }
 
-async function changeBooking() {
-    return ('put')
+async function changeBooking(userId: number, bookingId: number, roomId: number) {
+    const userBooking = await bookingRepository.findBookingByUserId(userId);
+    if(!userBooking) throw forbiddenError();
+    await checkVacancy(roomId);
+    const result = await bookingRepository.changeBooking(bookingId, roomId);
+    const booking = {
+        bookingId: result.id
+    }
+    return booking;
 }
 
 async function checkVacancy(roomId: number){

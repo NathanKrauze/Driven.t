@@ -4,6 +4,9 @@ async function findBookingByUserId(userId: number) {
     return await prisma.booking.findUnique({
         where: {
             userId,
+        },
+        include:{
+            Room: true
         }
     });
 }
@@ -17,8 +20,15 @@ async function createBooking(userId: number, roomId: number) {
     });
 }
 
-async function changeBooking() {
-    return await prisma.booking.findMany();
+async function changeBooking(bookingId: number, roomId: number) {
+    return await prisma.booking.update({
+        where:{
+            id: bookingId,
+        },
+        data: {
+            roomId,
+        }
+    });
 }
 
 async function checkRoomReservation(roomId: number) {

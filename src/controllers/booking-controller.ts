@@ -6,7 +6,7 @@ import { InputBookingBody } from '@/protocols';
 
 export async function getBooking(req: AuthenticatedRequest, res: Response) {
     const { userId } = req;
-    const booking = await bookingService.getBooking()
+    const booking = await bookingService.getBooking(userId)
     return res.status(httpStatus.OK).send(booking)
 }
 

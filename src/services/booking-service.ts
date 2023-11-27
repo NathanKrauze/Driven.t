@@ -3,8 +3,12 @@ import { bookingRepository, enrollmentRepository, ticketsRepository } from "@/re
 import { TicketStatus } from "@prisma/client";
 
 
-async function getBooking() {
-    return ('get')
+async function getBooking(userId: number) {
+    const booking = await bookingRepository.findBookingByUserId(userId);
+    if(!booking) {
+        throw notFoundError();
+    }
+    return booking;
 }
 
 async function createBooking(roomId: number, userId: number) {
